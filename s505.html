@@ -34,6 +34,7 @@
     </section>
 
     <section class="actions">
+      <button id="generatePdf" type="button">Download PDF</button>
       <button id="downloadJson" type="button">Download JSON</button>
       <label class="upload">
         <input id="uploadJson" type="file" accept="application/json">
@@ -43,6 +44,8 @@
     </section>
   </main>
 
+  <script src="vendor/pdf-lib.min.js"></script>
+  <script src="pdf-renderer.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
