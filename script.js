@@ -39,8 +39,10 @@ const variantInputs = document.querySelectorAll('input[name="s627Variant"]');
   const el = document.getElementById(id);
   if (el) {
     el.addEventListener('input', () => {
-      const v = normalizeTimeString(el.value);
-      if (v) el.value = v;
+      if (shouldNormalizeTimeOnInput(el.value)) {
+        const v = normalizeTimeString(el.value);
+        if (v) el.value = v;
+      }
     });
     el.addEventListener('blur', () => {
       const v = normalizeTimeString(el.value);
@@ -134,16 +136,39 @@ const normalizeTimeString = (val) => {
   const raw = val.toString().trim();
   if (!raw) return null;
   const normalizedSeparators = raw.replace(/\./g, ':').replace(/h/gi, ':').replace(/\s+/g, ' ').trim();
+  const digitsOnly = normalizedSeparators.replace(/\D/g, '');
+  let hours;
+  let minutes;
+  let suffix = null;
+
   const match = normalizedSeparators.match(/^(\d{1,2})(?::?(\d{2}))?\s*(am|pm)?$/i);
-  if (!match) return null;
-  let hours = parseInt(match[1], 10);
-  const minutes = parseInt(match[2] ?? '0', 10);
-  const suffix = match[3] ? match[3].toLowerCase() : null;
+  if (match) {
+    hours = parseInt(match[1], 10);
+    minutes = parseInt(match[2] ?? '0', 10);
+    suffix = match[3] ? match[3].toLowerCase() : null;
+  } else if (/^\d{3}$/.test(digitsOnly)) {
+    hours = parseInt(digitsOnly[0], 10);
+    minutes = parseInt(digitsOnly.slice(1), 10);
+  } else if (/^\d{4}$/.test(digitsOnly)) {
+    hours = parseInt(digitsOnly.slice(0, 2), 10);
+    minutes = parseInt(digitsOnly.slice(2), 10);
+  } else {
+    return null;
+  }
+
   if (isNaN(hours) || isNaN(minutes) || minutes > 59) return null;
   if (suffix === 'pm' && hours < 12) hours += 12;
   if (suffix === 'am' && hours === 12) hours = 0;
   if (hours > 23) return null;
   return `${pad2(hours)}:${pad2(minutes)}`;
+};
+const shouldNormalizeTimeOnInput = (val) => {
+  if (!val) return false;
+  const raw = val.toString().trim();
+  if (!raw) return false;
+  if (raw.includes(':') || /am|pm/i.test(raw)) return true;
+  const digits = raw.replace(/\D/g, '');
+  return digits.length >= 3;
 };
 const normalizeDateString = (val) => {
   if (!val) return val;
