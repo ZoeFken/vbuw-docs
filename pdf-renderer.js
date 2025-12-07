@@ -285,7 +285,8 @@
     const template = S460_TEMPLATE;
     const pdfBytes = await fetch(template.base).then((res) => res.arrayBuffer());
     const pdfDoc = await PDFDocument.load(pdfBytes);
-    const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+    const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+    const fontRegular = await pdfDoc.embedFont(StandardFonts.Helvetica);
     const fontSize = template.fontSize || 8;
     const days = Math.max(1, Math.min(8, payload.hoeveelDagen || 1));
     const startDate = payload.startDatum || payload.aanvangDatum || '';
@@ -305,16 +306,17 @@
         }
         let value = getVal(sourceName);
         const isDateField = field.name === '1';
-        if (field.name === '1' && startDate) {
+        if (isDateField && startDate) {
           const dateVal = day > 0 ? incrementDate(startDate, day) : startDate;
           value = value ? `--- ${dateVal} ---\n${value}` : `--- ${dateVal} ---`;
         }
         if (!value) return;
-        const fieldFontSize = isDateField ? fontSize + 4 : fontSize;
+        const fieldFontSize = (isDateField && startDate) ? fontSize + 4 : fontSize;
+        const fieldFont = (isDateField && startDate) ? fontBold : fontRegular;
         if (field.type === 'textbox') {
-          renderTextBox(page, field, value, font, fieldFontSize);
+          renderTextBox(page, field, value, fieldFont, fieldFontSize);
         } else {
-          renderTextField(page, field, value, font, fieldFontSize);
+          renderTextField(page, field, value, fieldFont, fieldFontSize);
         }
       });
     }
