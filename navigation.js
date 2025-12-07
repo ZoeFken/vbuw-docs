@@ -51,7 +51,6 @@
   const links = [
     { id: 's627', href: 's627.html', label: 'S627' },
     { id: 's460', href: 's460.html', label: 'S460' },
-    { id: 's505', href: 's505.html', label: 'S505' },
     { id: 'drive', href: 'https://drive.google.com/drive/folders/1wfK-iDhOTg_Xtzm-rLQYlmB-5gyzOYTZ?usp=drive_link', label: 'Google Drive', external: true },
     { id: 'locaties', href: 'https://zoefken.github.io/vbuw-locations/', label: 'locaties', external: true },
   ];
