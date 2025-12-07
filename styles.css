@@ -330,6 +330,18 @@ button:hover { background: var(--btn-primary-hover); }
   align-items: center;
   gap: 12px;
   margin-top: 8px;
+  justify-content: space-between;
+}
+.actions__left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.actions__buttons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
 }
 .upload {
   display: inline-block;
@@ -533,11 +545,26 @@ button:hover { background: var(--btn-primary-hover); }
   .actions {
     flex-direction: column;
     align-items: stretch;
+    gap: 8px;
   }
-  .actions button,
-  .actions .upload {
+  .actions__left {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .actions__buttons {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    margin-left: 0;
+  }
+  .actions__buttons button,
+  .actions__buttons .upload {
     width: 100%;
     text-align: center;
+  }
+  #status {
+    width: 100%;
   }
   .s460-inline-row {
     grid-template-columns: 1fr;

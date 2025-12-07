@@ -23,13 +23,17 @@
     </section>
 
     <section class="actions">
-      <button id="generatePdf" type="button">Download PDF</button>
-      <button id="downloadJson" type="button">Download JSON</button>
-      <label class="upload">
-        <input id="uploadJson" type="file" accept="application/json">
-        JSON importeren
-      </label>
-      <span id="status"></span>
+      <div class="actions__left">
+        <button id="generatePdf" type="button">Download PDF</button>
+        <span id="status"></span>
+      </div>
+      <div class="actions__buttons">
+        <button id="downloadJson" type="button">Gegevens downloaden</button>
+        <label class="upload">
+          <input id="uploadJson" type="file" accept="application/json">
+          Gegevens laden
+        </label>
+      </div>
     </section>
   </main>
 

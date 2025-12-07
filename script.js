@@ -431,7 +431,7 @@ function downloadJson() {
   a.download = `${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.${name}.json`;
   a.click();
   URL.revokeObjectURL(url);
-  setStatus('JSON gedownload');
+  setStatus('Gegevens opgeslagen');
 }
 
 function handleUpload(evt) {
@@ -442,9 +442,9 @@ function handleUpload(evt) {
     try {
       const data = JSON.parse(e.target.result);
       fillForm(data);
-      setStatus('JSON geladen');
+      setStatus('Gegevens geladen');
     } catch (err) {
-      setStatus('Ongeldige JSON');
+      setStatus('Bestand niet herkend');
     }
   };
   reader.readAsText(file);
