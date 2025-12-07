@@ -35,6 +35,19 @@ const variantInputs = document.querySelectorAll('input[name="s627Variant"]');
     });
   }
 });
+['s627_aanvangUur', 's627_eindUur'].forEach((id) => {
+  const el = document.getElementById(id);
+  if (el) {
+    el.addEventListener('input', () => {
+      const v = normalizeTimeString(el.value);
+      if (v) el.value = v;
+    });
+    el.addEventListener('blur', () => {
+      const v = normalizeTimeString(el.value);
+      if (v) el.value = v;
+    });
+  }
+});
 
 if (addInputBtn) addInputBtn.addEventListener('click', () => addInputRow());
 if (addFieldBtn) addFieldBtn.addEventListener('click', () => addFieldRow());
@@ -116,6 +129,22 @@ const formatDurationHM = (minutes) => {
   const m = minutes % 60;
   return `${pad2(h)}:${pad2(m)}`;
 };
+const normalizeTimeString = (val) => {
+  if (!val) return null;
+  const raw = val.toString().trim();
+  if (!raw) return null;
+  const normalizedSeparators = raw.replace(/\./g, ':').replace(/h/gi, ':').replace(/\s+/g, ' ').trim();
+  const match = normalizedSeparators.match(/^(\d{1,2})(?::?(\d{2}))?\s*(am|pm)?$/i);
+  if (!match) return null;
+  let hours = parseInt(match[1], 10);
+  const minutes = parseInt(match[2] ?? '0', 10);
+  const suffix = match[3] ? match[3].toLowerCase() : null;
+  if (isNaN(hours) || isNaN(minutes) || minutes > 59) return null;
+  if (suffix === 'pm' && hours < 12) hours += 12;
+  if (suffix === 'am' && hours === 12) hours = 0;
+  if (hours > 23) return null;
+  return `${pad2(hours)}:${pad2(minutes)}`;
+};
 const normalizeDateString = (val) => {
   if (!val) return val;
   const digits = val.replace(/\D/g, '');
@@ -161,6 +190,8 @@ function buildPayload() {
     inputs.forEach((i) => { map[i.name] = i.value; });
     map.aanvangDatum = normalizeDateString(map.aanvangDatum);
     map.eindDatum = normalizeDateString(map.eindDatum);
+    map.aanvangUur = normalizeTimeString(map.aanvangUur) || map.aanvangUur;
+    map.eindUur = normalizeTimeString(map.eindUur) || map.eindUur;
     const startDt = parseDateTime(map.aanvangDatum, map.aanvangUur);
     const endDt = parseDateTime(map.eindDatum, map.eindUur);
     let duurStr = map.vermoedelijkeDuur;
@@ -346,7 +377,10 @@ function collectS627Inputs() {
   Object.entries(map).forEach(([name, selector]) => {
     const el = qs(selector);
     if (el && el.value) {
-      list.push({ name, value: el.value });
+      const val = (name === 'aanvangUur' || name === 'eindUur')
+        ? normalizeTimeString(el.value) || el.value
+        : el.value;
+      list.push({ name, value: val });
     }
   });
   return list;
@@ -376,11 +410,21 @@ function populateS627FromInputs(inputs, explicit) {
     const el = qs(selector);
     if (!el) return;
     if (fromExplicit && explicit[name] !== undefined) {
-      el.value = explicit[name];
+      const val = (name === 'aanvangUur' || name === 'eindUur')
+        ? normalizeTimeString(explicit[name]) || explicit[name]
+        : explicit[name];
+      el.value = val;
       return;
     }
     const found = inputs.find((i) => i.name === name);
-    el.value = found ? (found.value || '') : '';
+    if (found) {
+      const val = (name === 'aanvangUur' || name === 'eindUur')
+        ? normalizeTimeString(found.value) || found.value
+        : found.value;
+      el.value = val || '';
+    } else {
+      el.value = '';
+    }
   });
 }
 
