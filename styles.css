@@ -309,6 +309,27 @@ header p { margin: 0 0 16px; color: var(--muted); }
   margin: 6px 0 0;
   color: var(--muted);
 }
+.article {
+  max-width: 900px;
+  margin: 24px auto;
+  padding: 0 16px 48px;
+}
+.article h1 {
+  margin-bottom: 10px;
+}
+.article .lede {
+  color: var(--muted);
+  font-size: 18px;
+  margin-bottom: 18px;
+}
+.article .card p {
+  margin-bottom: 10px;
+}
+.article .highlights {
+  list-style: disc;
+  padding-left: 20px;
+  color: var(--muted);
+}
 .card {
   background: var(--card-bg);
   border-radius: 10px;
